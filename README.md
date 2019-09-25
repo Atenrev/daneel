@@ -48,7 +48,6 @@ private IEnumerator Learn()
         {
             samples[i].SetActive(true);
             game_running = true;
-            first_touch = true;
             while (game_running)
             {
                 yield return new WaitForEndOfFrame();
