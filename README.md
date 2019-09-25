@@ -1,5 +1,5 @@
 # daneel
-A Machine Learning library to develop prototypes fast.
+A Machine Learning library to develop agent prototypes in unity fast.
 
 ## How to use
 Make your playable GameObject extend from NetInterface and implement the "Think" function where you should program your model's inputs and outputs.
