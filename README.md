@@ -58,11 +58,13 @@ private IEnumerator Learn()
             if (samples[i].GetComponent<NetInterface>().Score < new_score)
                 samples[i].GetComponent<NetInterface>().Score = new_score;
             ResetGame();
-            Debug.Log("Score of sample " + samples[i].GetComponent<NetInterface>().Id + ": " + samples[i].GetComponent<NetInterface>().Score + "\nNext sample incoming...");
+            Debug.Log("Score of sample " + samples[i].GetComponent<NetInterface>().Id + ": " 
+                + samples[i].GetComponent<NetInterface>().Score + "\nNext sample incoming...");
         }
         genetic.NextGeneration();
         genetic.SaveBestSample("sample_" + genetic.Best_sample.GetComponent<NetInterface>().Id + ".txt");
-        Debug.Log("Best sample: " + genetic.Best_sample.GetComponent<NetInterface>().Id + "\nNext generation in coming.");
+        Debug.Log("Best sample: " + genetic.Best_sample.GetComponent<NetInterface>().Id 
+            + "\nNext generation in coming.");
         samples = genetic.Samples;
     }
 }
