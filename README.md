@@ -2,7 +2,7 @@
 A Machine Learning library to develop agent prototypes in unity fast.
 
 ## How to use
-First of all, you have to configure the constants in MindConstants with the number of input nodes, output nodes and hidden nodes. You may set your preferred mutation rate and other settings.
+First of all, you have to configure the constants in MindConstants with the number of input nodes, output nodes and hidden nodes. You may set your preferred mutation rate and other desirable settings.
 
 Make your playable GameObject extend from NetInterface and implement the "Think" function where you should program your model's inputs and outputs.
 
