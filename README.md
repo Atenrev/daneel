@@ -2,6 +2,8 @@
 A Machine Learning library to develop agent prototypes in unity fast.
 
 ## How to use
+First of all, you have to configure the constants in MindConstants with the number of input nodes, output nodes and hidden nodes. You may set your preferred mutation rate and other settings.
+
 Make your playable GameObject extend from NetInterface and implement the "Think" function where you should program your model's inputs and outputs.
 
 You must have something like that:
@@ -28,7 +30,7 @@ public class PlayableObject : NetInterface
     }
 }
 ```
-After that, write your learning algorithm in your GameController's script. For example:
+Then, drag Genetic to the scene and write your learning algorithm in your GameController's script. For example:
 ``` C#
 private Genetic genetic;
 private GameObject[] samples;
