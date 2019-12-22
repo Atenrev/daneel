@@ -1,5 +1,5 @@
 # daneel
-A Machine Learning library to train agents in unity fast.
+A Machine Learning scripts to train agents in unity fast.
 
 ## How to use
 First of all, you have to configure the constants in MindConstants with the number of input nodes, output nodes and hidden nodes. You may set your preferred mutation rate and other desirable settings.
