@@ -69,3 +69,23 @@ private IEnumerator Learn()
     }
 }
 ```
+Then, drag your prefab model to the Genetic script's Model field in the Unity's inspector and Play.
+
+### Save your samples
+
+With the function 'SaveBestSample'
+``` C#
+genetic.SaveBestSample("sample_" + genetic.Best_sample.GetComponent<NetInterface>().Id + ".txt");
+```
+you can save the best sample in a text file that you can then load to continue with the training if it was stopped.
+
+
+To load a sample, instead of using 
+``` C#
+genetic.GenerateRandomGeneration();
+```
+to generate a random generation, use
+``` C#
+genetic.GenerateGenerationFromModel("your_samples_name.txt");
+```
+
