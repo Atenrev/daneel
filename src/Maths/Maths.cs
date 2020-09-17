@@ -10,6 +10,12 @@ public class Maths
         return 1 / (1 + Mathf.Exp(-input));
     }
 
+    public static float TanH(float input)
+    {
+        float ex = Mathf.Exp(input), nex = Mathf.Exp(-input);
+        return (ex - nex) / (ex + nex);
+    }
+
     public static float RandomNormal()
     {
         System.Random rand = new System.Random(); 

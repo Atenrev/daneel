@@ -5,24 +5,28 @@ using UnityEngine;
 public class Net
 {
     private int input_nodes, output_nodes, hidden_nodes;
-    private Matrix input_weights, output_weights, hidden_weights;
+    private Matrix output_weights, input_weights;
+	private Matrix[] hidden_weights;
 
-    // TODO: Afegir parametrització de les capes ocultes
-    public Net(int inputs, int outputs, int hidden)
+	// TODO: Afegir parametrització de les capes ocultes
+	public Net(int inputs, int outputs, int hidden, int num_hidden_layers)
     {
         input_nodes = inputs;
         output_nodes = outputs;
         hidden_nodes = hidden;
 
         input_weights = new Matrix(hidden_nodes, input_nodes + 1);
-        hidden_weights = new Matrix(hidden_nodes, hidden_nodes + 1);
+		hidden_weights = new Matrix[num_hidden_layers];
+		for (int i = 0; i < hidden_weights.Length; i++)
+			hidden_weights[i] = new Matrix(hidden_nodes, hidden_nodes + 1);
         output_weights = new Matrix(output_nodes, hidden_nodes + 1);
     }
 
     public void InitializeRandom()
     {
         input_weights.Randomize();
-        hidden_weights.Randomize();
+		for (int i = 0; i < hidden_weights.Length; i++)
+			hidden_weights[i].Randomize();
         output_weights.Randomize();
     }
     
@@ -35,11 +39,20 @@ public class Net
         layer_1.Activate();
         layer_1.AddBias();
 
-        Matrix layer_2 = hidden_weights.MultiplyByMatrix(layer_1);
-        layer_2.Activate();
-        layer_2.AddBias();
+		Matrix[] hidden_layers = new Matrix[hidden_weights.Length];
 
-        Matrix outputs = output_weights.MultiplyByMatrix(layer_2);
+		hidden_layers[0] = hidden_weights[0].MultiplyByMatrix(layer_1);
+		hidden_layers[0].Activate();
+		hidden_layers[0].AddBias();
+
+		for (int i = 1; i < hidden_weights.Length; i++)
+		{
+			hidden_layers[i] = hidden_weights[i].MultiplyByMatrix(hidden_layers[i-1]);
+			hidden_layers[i].Activate();
+			hidden_layers[i].AddBias();
+		}
+
+        Matrix outputs = output_weights.MultiplyByMatrix(hidden_layers[hidden_weights.Length-1]);
         outputs.Activate();
 
         return outputs.ToArray();
@@ -48,16 +61,19 @@ public class Net
     public void Mutate()
     {
         input_weights.Mutate();
-        hidden_weights.Mutate();
-        output_weights.Mutate();
+		for (int i = 0; i < hidden_weights.Length; i++)
+			hidden_weights[i].Mutate();
+		output_weights.Mutate();
     }
 
     public Net Clone()
     {
-        Net clone = new Net(input_nodes, output_nodes, hidden_nodes);
+        Net clone = new Net(input_nodes, output_nodes, hidden_nodes, hidden_weights.Length);
 
         clone.Input_weights = input_weights.Clone();
-        clone.Hidden_weights = hidden_weights.Clone();
+		clone.Hidden_weights = new Matrix[hidden_weights.Length];
+		for (int i = 0; i < hidden_weights.Length; i++)
+			clone.Hidden_weights[i] = hidden_weights[i].Clone();
         clone.Output_weights = output_weights.Clone();
 
         return clone;
@@ -65,11 +81,18 @@ public class Net
 
     public string SaveToCSV(string file)
     {
-        string inputs = input_weights.ToCSV(),
-            outputs = output_weights.ToCSV(),
-            hidden = hidden_weights.ToCSV();
+		string inputs = input_weights.ToCSV(),
+			outputs = output_weights.ToCSV();
 
-        string net = inputs +
+        string hidden = "";
+		for (int i = 0; i < hidden_weights.Length; i++)
+		{
+			hidden += hidden_weights[i].ToCSV();
+			if (i != hidden_weights.Length - 1)
+				hidden += "\n";
+		}
+
+			string net = inputs +
             "\n" + outputs +
             "\n" + hidden;
 
@@ -85,16 +108,14 @@ public class Net
 
         input_weights.LoadFromCSV(lines[0]);
         output_weights.LoadFromCSV(lines[1]);
-        hidden_weights.LoadFromCSV(lines[2]);
 
-        // TODO
-        //for (int i = 2; i < lines.Length; i++)
-        //{
-            
-        //}
+        for (int i = 2; i < lines.Length; i++)
+        {
+			hidden_weights[i-2].LoadFromCSV(lines[i]);
+		}
     }
 
     public Matrix Input_weights { get => input_weights; set => input_weights = value; }
     public Matrix Output_weights { get => output_weights; set => output_weights = value; }
-    public Matrix Hidden_weights { get => hidden_weights; set => hidden_weights = value; }
+    public Matrix[] Hidden_weights { get => hidden_weights; set => hidden_weights = value; }
 }

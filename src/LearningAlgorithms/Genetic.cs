@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Genetic : MonoBehaviour
 {
-    public const int NUMBER_OF_GENERATION_SAMPLES = 20;
-    public const float MUTATION_PERCENTAGE = 0.75f;
+    public const int NUMBER_OF_GENERATION_SAMPLES = 50;
+    public const float MUTATION_PERCENTAGE = 0.5f;
 
     [SerializeField]
     private GameObject model;
@@ -14,7 +14,6 @@ public class Genetic : MonoBehaviour
     private GameObject[] samples;
 
 
-    // Start is called before the first frame update
     void Awake()
     {
         samples = new GameObject[NUMBER_OF_GENERATION_SAMPLES];
@@ -30,8 +29,9 @@ public class Genetic : MonoBehaviour
             net = new Net(
                 MindConstants.NUMBER_OF_INPUT_NODES,
                 MindConstants.NUMBER_OF_OUTPUT_NODES,
-                MindConstants.NUMBER_OF_HIDDEN_NODES
-                );
+                MindConstants.NUMBER_OF_HIDDEN_NODES,
+				MindConstants.NUMBER_OF_HIDDEN_LAYERS
+				);
             net.InitializeRandom();
             InstantiateWithNet(i, net);
         }
@@ -42,12 +42,13 @@ public class Genetic : MonoBehaviour
         Net net = new Net(
             MindConstants.NUMBER_OF_INPUT_NODES, 
             MindConstants.NUMBER_OF_OUTPUT_NODES, 
-            MindConstants.NUMBER_OF_HIDDEN_NODES
-            );
+            MindConstants.NUMBER_OF_HIDDEN_NODES,
+			MindConstants.NUMBER_OF_HIDDEN_LAYERS
+			);
         net.LoadFromCSV(file);
         best_sample = Instantiate(model);
-        best_sample.GetComponent<NetInterface>().Mind = net;
-        NetInterface best = best_sample.GetComponent<NetInterface>();
+        best_sample.GetComponentInChildren<NetInterface>().Mind = net;
+        NetInterface best = best_sample.GetComponentInChildren<NetInterface>();
         samples[0] = best_sample;
 
         net = null;
@@ -62,8 +63,9 @@ public class Genetic : MonoBehaviour
             net = new Net(
                 MindConstants.NUMBER_OF_INPUT_NODES,
                 MindConstants.NUMBER_OF_OUTPUT_NODES,
-                MindConstants.NUMBER_OF_HIDDEN_NODES
-                );
+                MindConstants.NUMBER_OF_HIDDEN_NODES,
+				MindConstants.NUMBER_OF_HIDDEN_LAYERS
+				);
             net.InitializeRandom();
             InstantiateWithNet(i, net);
         }
@@ -73,9 +75,9 @@ public class Genetic : MonoBehaviour
     {
         UpdateBestSample();
 
-        Net best = best_sample.GetComponent<NetInterface>().Mind.Clone();
-        int id = best_sample.GetComponent<NetInterface>().Id;
-        float score = best_sample.GetComponent<NetInterface>().Score;
+        Net best = best_sample.GetComponentInChildren<NetInterface>().Mind.Clone();
+        int id = best_sample.GetComponentInChildren<NetInterface>().Id;
+        float score = best_sample.GetComponentInChildren<NetInterface>().Score;
         Destroy(samples[0]);
         InstantiateWithNetAndScore(0, best, score, id);
 
@@ -92,8 +94,9 @@ public class Genetic : MonoBehaviour
             net = new Net(
                 MindConstants.NUMBER_OF_INPUT_NODES,
                 MindConstants.NUMBER_OF_OUTPUT_NODES,
-                MindConstants.NUMBER_OF_HIDDEN_NODES
-                );
+                MindConstants.NUMBER_OF_HIDDEN_NODES,
+				MindConstants.NUMBER_OF_HIDDEN_LAYERS
+				);
             net.InitializeRandom();
             Destroy(samples[i]);
             InstantiateWithNet(i, net);
@@ -107,7 +110,7 @@ public class Genetic : MonoBehaviour
         {
             sample = samples[i];
             if (best_sample == null 
-                || best_sample.GetComponent<NetInterface>().Score < sample.GetComponent<NetInterface>().Score)
+                || best_sample.GetComponentInChildren<NetInterface>().Score < sample.GetComponentInChildren<NetInterface>().Score)
             {
                 best_sample = sample;
             }
@@ -116,7 +119,7 @@ public class Genetic : MonoBehaviour
 
     public void SaveBestSample(string file)
     {
-        best_sample.GetComponent<NetInterface>().Mind.SaveToCSV(file);
+        best_sample.GetComponentInChildren<NetInterface>().Mind.SaveToCSV(file);
     }
 
 
@@ -124,14 +127,14 @@ public class Genetic : MonoBehaviour
     {
         samples[index] = Instantiate(model);
         samples[index].SetActive(false);
-        samples[index].GetComponent<NetInterface>().Initialize(net);
+        samples[index].GetComponentInChildren<NetInterface>().Initialize(net);
     }
 
     private void InstantiateWithNetAndScore(int index, Net net, float score, int id)
     {
         samples[index] = Instantiate(model);
         samples[index].SetActive(false);
-        samples[index].GetComponent<NetInterface>().Initialize(net, score, id);
+        samples[index].GetComponentInChildren<NetInterface>().Initialize(net, score, id);
     }
 
     public GameObject Best_sample { get => best_sample; set => best_sample = value; }

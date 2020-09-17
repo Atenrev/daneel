@@ -9,6 +9,7 @@ public abstract class NetInterface : MonoBehaviour
     protected int id;
     protected float[] outputs;
     public static int next_id = 0;
+	public static bool MACHINE = false;
 
     protected abstract IEnumerator Think();
 
